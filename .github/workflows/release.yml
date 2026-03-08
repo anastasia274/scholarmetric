@@ -85,24 +85,8 @@ jobs:
           mkdir -p "$PKG_DIR/usr/share/icons/hicolor/128x128/apps"
           cp src-tauri/target/release/scholarmetric "$PKG_DIR/usr/bin/"
           cp src-tauri/icons/128x128.png "$PKG_DIR/usr/share/icons/hicolor/128x128/apps/scholarmetric.png"
-          cat > "$PKG_DIR/usr/share/applications/scholarmetric.desktop" <<'DESKTOP'
-[Desktop Entry]
-Name=ScholarMetric
-Exec=scholarmetric
-Icon=scholarmetric
-Type=Application
-Categories=Education;
-DESKTOP
-          cat > "$PKG_DIR/.PKGINFO" <<PKGINFO
-pkgname = scholarmetric
-pkgver = ${VERSION}-1
-pkgdesc = Student grade management desktop app
-url = https://github.com/anastasia274/scholarmetric
-arch = x86_64
-license = MIT
-depend = webkit2gtk-4.1
-depend = gtk3
-PKGINFO
+          printf '%s\n' '[Desktop Entry]' 'Name=ScholarMetric' 'Exec=scholarmetric' 'Icon=scholarmetric' 'Type=Application' 'Categories=Education;' > "$PKG_DIR/usr/share/applications/scholarmetric.desktop"
+          printf '%s\n' "pkgname = scholarmetric" "pkgver = ${VERSION}-1" "pkgdesc = Student grade management desktop app" "url = https://github.com/anastasia274/scholarmetric" "arch = x86_64" "license = MIT" "depend = webkit2gtk-4.1" "depend = gtk3" > "$PKG_DIR/.PKGINFO"
           cd "$PKG_DIR"
           fakeroot -- bash -c "tar -czf ../scholarmetric-${VERSION}-1-x86_64.pkg.tar.gz .PKGINFO usr/"
 
