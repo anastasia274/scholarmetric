@@ -31,7 +31,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf xdg-utils
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf libfuse2 xdg-utils
 
       - uses: oven-sh/setup-bun@v2
 
@@ -39,14 +39,13 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun tauri build
+        run: bun tauri build --bundles deb,rpm
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-bundle
           path: |
-            src-tauri/target/release/bundle/appimage/*.AppImage
             src-tauri/target/release/bundle/deb/*.deb
             src-tauri/target/release/bundle/rpm/*.rpm
 
@@ -74,38 +73,38 @@ jobs:
         run: $HOME/.bun/bin/bun install
 
       - name: Build
-        run: $HOME/.bun/bin/bun tauri build
+        run: $HOME/.bun/bin/bun tauri build --no-bundle
 
       - name: Create pacman package
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          VERSION="${VERSION:-0.1.0}"
+          export VERSION="${GITHUB_REF_NAME#v}"
+          export VERSION="${VERSION:-0.1.0}"
           PKG_DIR="pkg-arch"
           mkdir -p "$PKG_DIR/usr/bin"
           mkdir -p "$PKG_DIR/usr/share/applications"
           mkdir -p "$PKG_DIR/usr/share/icons/hicolor/128x128/apps"
           cp src-tauri/target/release/scholarmetric "$PKG_DIR/usr/bin/"
           cp src-tauri/icons/128x128.png "$PKG_DIR/usr/share/icons/hicolor/128x128/apps/scholarmetric.png"
-          cat > "$PKG_DIR/usr/share/applications/scholarmetric.desktop" <<DESKTOP
-          [Desktop Entry]
-          Name=ScholarMetric
-          Exec=scholarmetric
-          Icon=scholarmetric
-          Type=Application
-          Categories=Education;
-          DESKTOP
+          cat > "$PKG_DIR/usr/share/applications/scholarmetric.desktop" <<'DESKTOP'
+[Desktop Entry]
+Name=ScholarMetric
+Exec=scholarmetric
+Icon=scholarmetric
+Type=Application
+Categories=Education;
+DESKTOP
           cat > "$PKG_DIR/.PKGINFO" <<PKGINFO
-          pkgname = scholarmetric
-          pkgver = ${VERSION}-1
-          pkgdesc = Student grade management desktop app
-          url = https://github.com/anastasia274/scholarmetric
-          arch = x86_64
-          license = MIT
-          depend = webkit2gtk-4.1
-          depend = gtk3
-          PKGINFO
+pkgname = scholarmetric
+pkgver = ${VERSION}-1
+pkgdesc = Student grade management desktop app
+url = https://github.com/anastasia274/scholarmetric
+arch = x86_64
+license = MIT
+depend = webkit2gtk-4.1
+depend = gtk3
+PKGINFO
           cd "$PKG_DIR"
-          fakeroot -- bash -c 'tar -czf ../scholarmetric-${VERSION}-1-x86_64.pkg.tar.gz .PKGINFO usr/'
+          fakeroot -- bash -c "tar -czf ../scholarmetric-${VERSION}-1-x86_64.pkg.tar.gz .PKGINFO usr/"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -161,7 +160,6 @@ jobs:
           draft: true
           generate_release_notes: true
           files: |
-            release-artifacts/**/*.AppImage
             release-artifacts/**/*.deb
             release-artifacts/**/*.rpm
             release-artifacts/**/*.pkg.tar.gz
