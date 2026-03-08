@@ -1,6 +1,6 @@
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 use sqlx::SqlitePool;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use tauri::AppHandle;
 use tauri::Manager;
@@ -16,7 +16,7 @@ pub fn get_db_path(app: &AppHandle) -> PathBuf {
     app_dir.join("scholarmetric.db")
 }
 
-pub async fn init_db(path: &PathBuf) -> Result<SqlitePool, sqlx::Error> {
+pub async fn init_db(path: &Path) -> Result<SqlitePool, sqlx::Error> {
     let db_url = format!("sqlite:{}?mode=rwc", path.display());
     let opts = SqliteConnectOptions::from_str(&db_url)?
         .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)

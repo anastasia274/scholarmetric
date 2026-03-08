@@ -65,6 +65,26 @@ pub struct Grade {
     pub value: Option<String>,
 }
 
+// --- Query-only structures (not serialized to frontend) ---
+
+#[derive(Debug, Clone, FromRow)]
+pub struct StudentInfo {
+    pub id: i64,
+    pub last_name: String,
+    pub first_name: String,
+    pub patronymic: Option<String>,
+}
+
+#[derive(Debug, Clone, FromRow)]
+pub struct StudentWithGroup {
+    pub id: i64,
+    pub last_name: String,
+    pub first_name: String,
+    pub patronymic: Option<String>,
+    pub group_name: String,
+    pub group_id: i64,
+}
+
 // --- Report structures ---
 
 #[derive(Debug, Serialize, Clone)]

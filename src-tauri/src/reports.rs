@@ -74,14 +74,6 @@ pub async fn build_group_report(
 
     let subjects: Vec<SubjectHeader> = subject_rows.into_iter().map(SubjectHeader::from).collect();
 
-    #[derive(sqlx::FromRow)]
-    struct StudentInfo {
-        id: i64,
-        last_name: String,
-        first_name: String,
-        patronymic: Option<String>,
-    }
-
     let students_info = sqlx::query_as::<_, StudentInfo>(
         "SELECT id, last_name, first_name, patronymic
          FROM students WHERE group_id = ?
@@ -165,16 +157,6 @@ pub async fn build_overall_ranking(
     pool: &SqlitePool,
     semester: i32,
 ) -> Result<OverallRanking, String> {
-    #[derive(sqlx::FromRow)]
-    struct StudentWithGroup {
-        id: i64,
-        last_name: String,
-        first_name: String,
-        patronymic: Option<String>,
-        group_name: String,
-        group_id: i64,
-    }
-
     let all_students = sqlx::query_as::<_, StudentWithGroup>(
         "SELECT DISTINCT s.id, s.last_name, s.first_name, s.patronymic, g.name as group_name, s.group_id
          FROM students s
