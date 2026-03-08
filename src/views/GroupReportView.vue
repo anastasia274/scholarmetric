@@ -175,20 +175,20 @@ async function exportXlsx() {
   margin-bottom: 1rem;
   align-items: center;
 }
-.hint { margin-top: 2rem; color: #888; }
+.hint { margin-top: 2rem; color: var(--app-cell-empty-text); }
 .table-wrapper { overflow-x: auto; margin-top: 1rem; }
 .report-table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
-.report-table th, .report-table td { border: 1px solid #ddd; padding: 0.5rem; text-align: center; }
+.report-table th, .report-table td { border: 1px solid var(--app-border); padding: 0.5rem; text-align: center; }
 .th-name, .td-name { text-align: left; white-space: nowrap; }
 .th-subject { min-width: 90px; }
-.th-subject small { color: #888; font-weight: normal; }
+.th-subject small { color: var(--app-cell-empty-text); font-weight: normal; }
 .td-grade { font-weight: 600; }
-.cell-excellent { background: #e8f5e9; }
-.cell-good { background: #e3f2fd; }
-.cell-satisfactory { background: #fff3e0; }
-.cell-failing { background: #ffebee; }
-.cell-empty { color: #bbb; }
-.stats-block { margin-top: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 8px; }
+.cell-excellent { background: var(--app-cell-excellent); }
+.cell-good { background: var(--app-cell-good); }
+.cell-satisfactory { background: var(--app-cell-satisfactory); }
+.cell-failing { background: var(--app-cell-failing); }
+.cell-empty { color: var(--app-cell-empty-text); }
+.stats-block { margin-top: 1.5rem; padding: 1rem; background: var(--app-stats-bg); border-radius: 8px; }
 .stats-block h3 { margin-bottom: 0.75rem; }
 .stats-grid { display: grid; grid-template-columns: auto auto; gap: 0.4rem 1rem; max-width: 300px; }
 </style>

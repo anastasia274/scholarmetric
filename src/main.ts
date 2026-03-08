@@ -13,6 +13,9 @@ app.use(router);
 app.use(PrimeVue, {
   theme: {
     preset: Aura,
+    options: {
+      darkModeSelector: ".dark",
+    },
   },
 });
 app.use(ConfirmationService);

@@ -189,7 +189,7 @@ function fio(s: Student): string {
 }
 .grades-table th,
 .grades-table td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--app-border);
   padding: 0.5rem;
   text-align: center;
 }
@@ -203,7 +203,7 @@ function fio(s: Student): string {
   min-width: 100px;
 }
 .th-subject small {
-  color: #888;
+  color: var(--app-cell-empty-text);
   font-weight: normal;
 }
 .td-grade {
@@ -215,21 +215,21 @@ function fio(s: Student): string {
   padding: 0.25rem;
   font-weight: 600;
 }
-.cell-excellent { background: #e8f5e9; }
-.cell-good { background: #e3f2fd; }
-.cell-satisfactory { background: #fff3e0; }
-.cell-failing { background: #ffebee; }
-.cell-empty { background: #fafafa; color: #bbb; }
+.cell-excellent { background: var(--app-cell-excellent); }
+.cell-good { background: var(--app-cell-good); }
+.cell-satisfactory { background: var(--app-cell-satisfactory); }
+.cell-failing { background: var(--app-cell-failing); }
+.cell-empty { background: var(--app-cell-empty-bg); color: var(--app-cell-empty-text); }
 
 .grade-menu {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--app-menu-bg);
+  border: 1px solid var(--app-menu-border);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   display: flex;
   gap: 2px;
   padding: 4px;
@@ -241,7 +241,8 @@ function fio(s: Student): string {
 }
 .grade-option {
   border: none;
-  background: #f5f5f5;
+  background: var(--app-option-bg);
+  color: var(--app-text);
   padding: 0.35rem 0.6rem;
   border-radius: 4px;
   cursor: pointer;
@@ -249,7 +250,7 @@ function fio(s: Student): string {
   font-size: 0.9rem;
 }
 .grade-option:hover {
-  background: #e0e0e0;
+  background: var(--app-option-hover);
 }
 .grade-option.active {
   background: var(--p-primary-color, #3b82f6);

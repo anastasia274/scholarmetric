@@ -67,16 +67,16 @@ async function importDatabase() {
 .action-card {
   flex: 1;
   padding: 1.5rem;
-  background: white;
+  background: var(--app-card-bg);
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--app-border);
 }
 .action-card h3 {
   margin-bottom: 0.5rem;
 }
 .action-card p {
   margin-bottom: 1rem;
-  color: #666;
+  color: var(--app-cell-empty-text);
   font-size: 0.9rem;
 }
 </style>
