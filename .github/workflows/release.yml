@@ -50,6 +50,69 @@ jobs:
             src-tauri/target/release/bundle/deb/*.deb
             src-tauri/target/release/bundle/rpm/*.rpm
 
+  archlinux:
+    name: Arch Linux
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm rustup webkit2gtk-4.1 libayatana-appindicator librsvg unzip curl
+
+      - name: Setup Rust
+        run: rustup default stable
+
+      - name: Install bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
+
+      - name: Install frontend dependencies
+        run: $HOME/.bun/bin/bun install
+
+      - name: Build
+        run: $HOME/.bun/bin/bun tauri build
+
+      - name: Create pacman package
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${VERSION:-0.1.0}"
+          PKG_DIR="pkg-arch"
+          mkdir -p "$PKG_DIR/usr/bin"
+          mkdir -p "$PKG_DIR/usr/share/applications"
+          mkdir -p "$PKG_DIR/usr/share/icons/hicolor/128x128/apps"
+          cp src-tauri/target/release/scholarmetric "$PKG_DIR/usr/bin/"
+          cp src-tauri/icons/128x128.png "$PKG_DIR/usr/share/icons/hicolor/128x128/apps/scholarmetric.png"
+          cat > "$PKG_DIR/usr/share/applications/scholarmetric.desktop" <<DESKTOP
+          [Desktop Entry]
+          Name=ScholarMetric
+          Exec=scholarmetric
+          Icon=scholarmetric
+          Type=Application
+          Categories=Education;
+          DESKTOP
+          cat > "$PKG_DIR/.PKGINFO" <<PKGINFO
+          pkgname = scholarmetric
+          pkgver = ${VERSION}-1
+          pkgdesc = Student grade management desktop app
+          url = https://github.com/anastasia274/scholarmetric
+          arch = x86_64
+          license = MIT
+          depend = webkit2gtk-4.1
+          depend = gtk3
+          PKGINFO
+          cd "$PKG_DIR"
+          fakeroot -- bash -c 'tar -czf ../scholarmetric-${VERSION}-1-x86_64.pkg.tar.gz .PKGINFO usr/'
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: archlinux-bundle
+          path: "*.pkg.tar.gz"
+
   windows:
     name: Windows
     runs-on: windows-latest
@@ -81,7 +144,7 @@ jobs:
   release:
     name: Create GitHub Release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [linux, windows]
+    needs: [linux, archlinux, windows]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,5 +164,6 @@ jobs:
             release-artifacts/**/*.AppImage
             release-artifacts/**/*.deb
             release-artifacts/**/*.rpm
+            release-artifacts/**/*.pkg.tar.gz
             release-artifacts/**/*.exe
             release-artifacts/**/*.msi
