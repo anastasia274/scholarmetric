@@ -191,7 +191,8 @@ pub async fn build_overall_ranking(
         .await
         .map_err(map_err)?;
 
-        let subjects: Vec<SubjectHeader> = subject_rows.into_iter().map(SubjectHeader::from).collect();
+        let subjects: Vec<SubjectHeader> =
+            subject_rows.into_iter().map(SubjectHeader::from).collect();
 
         let mut grade_cells = Vec::new();
         for subj in &subjects {

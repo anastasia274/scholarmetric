@@ -19,14 +19,15 @@ pub fn preview_group_name(name: String) -> String {
 #[tauri::command]
 pub async fn create_group(state: State<'_, DbState>, name: String) -> CmdResult<Group> {
     let normalized = normalize_group_name(&name);
-    let id = sqlx::query_scalar::<_, i64>(
-        "INSERT INTO groups (name) VALUES (?) RETURNING id",
-    )
-    .bind(&normalized)
-    .fetch_one(&state.0)
-    .await
-    .map_err(map_err)?;
-    Ok(Group { id, name: normalized })
+    let id = sqlx::query_scalar::<_, i64>("INSERT INTO groups (name) VALUES (?) RETURNING id")
+        .bind(&normalized)
+        .fetch_one(&state.0)
+        .await
+        .map_err(map_err)?;
+    Ok(Group {
+        id,
+        name: normalized,
+    })
 }
 
 #[tauri::command]
@@ -46,7 +47,10 @@ pub async fn update_group(state: State<'_, DbState>, id: i64, name: String) -> C
         .execute(&state.0)
         .await
         .map_err(map_err)?;
-    Ok(Group { id, name: normalized })
+    Ok(Group {
+        id,
+        name: normalized,
+    })
 }
 
 #[tauri::command]
@@ -64,13 +68,11 @@ pub async fn delete_group(state: State<'_, DbState>, id: i64) -> CmdResult<()> {
 #[tauri::command]
 pub async fn create_subject(state: State<'_, DbState>, name: String) -> CmdResult<Subject> {
     let trimmed = name.trim().to_string();
-    let id = sqlx::query_scalar::<_, i64>(
-        "INSERT INTO subjects (name) VALUES (?) RETURNING id",
-    )
-    .bind(&trimmed)
-    .fetch_one(&state.0)
-    .await
-    .map_err(map_err)?;
+    let id = sqlx::query_scalar::<_, i64>("INSERT INTO subjects (name) VALUES (?) RETURNING id")
+        .bind(&trimmed)
+        .fetch_one(&state.0)
+        .await
+        .map_err(map_err)?;
     Ok(Subject { id, name: trimmed })
 }
 
@@ -83,7 +85,11 @@ pub async fn get_subjects(state: State<'_, DbState>) -> CmdResult<Vec<Subject>> 
 }
 
 #[tauri::command]
-pub async fn update_subject(state: State<'_, DbState>, id: i64, name: String) -> CmdResult<Subject> {
+pub async fn update_subject(
+    state: State<'_, DbState>,
+    id: i64,
+    name: String,
+) -> CmdResult<Subject> {
     let trimmed = name.trim().to_string();
     sqlx::query("UPDATE subjects SET name = ? WHERE id = ?")
         .bind(&trimmed)
@@ -137,7 +143,10 @@ pub async fn create_student(
 }
 
 #[tauri::command]
-pub async fn get_students(state: State<'_, DbState>, group_id: Option<i64>) -> CmdResult<Vec<Student>> {
+pub async fn get_students(
+    state: State<'_, DbState>,
+    group_id: Option<i64>,
+) -> CmdResult<Vec<Student>> {
     match group_id {
         Some(gid) => {
             sqlx::query_as::<_, Student>(
@@ -301,14 +310,12 @@ pub async fn set_grade(
             .map_err(map_err)?;
         }
         None => {
-            sqlx::query(
-                "DELETE FROM grades WHERE student_id = ? AND group_subject_id = ?",
-            )
-            .bind(student_id)
-            .bind(group_subject_id)
-            .execute(&state.0)
-            .await
-            .map_err(map_err)?;
+            sqlx::query("DELETE FROM grades WHERE student_id = ? AND group_subject_id = ?")
+                .bind(student_id)
+                .bind(group_subject_id)
+                .execute(&state.0)
+                .await
+                .map_err(map_err)?;
         }
     }
     Ok(())
